@@ -3,7 +3,7 @@ NAME = Colleen
 
 OBJ_DIR		=	objs
 INC_DIR		=	includes
-SRC_DIR		=	$(shell find srcs -type d)
+SRC_DIR		=	$(shell find C -type d)
 
 CXX	= clang
 CXXFLAGS = -Wall -Wextra -Werror
