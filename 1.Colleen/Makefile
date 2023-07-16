@@ -1,46 +1,68 @@
-NAME = Colleen
+NAME_C = Colleen_C
+NAME_ASM = Colleen_ASM
 # NAME_T = test
 
-OBJ_DIR		=	objs
+OBJ_DIR_C	=	objs_c
 INC_DIR		=	includes
-SRC_DIR		=	$(shell find C -type d)
+SRC_DIR_C	=	$(shell find C -type d)
 
-CXX	= clang
-CXXFLAGS = -Wall -Wextra -Werror
+OBJ_DIR_ASM	=	objs_asm
+SRC_DIR_ASM	=	$(shell find ASM -type d)
 
+CXX			= clang
+CXXFLAGS	= -Wall -Wextra -Werror
+
+LINKER		= ld
+LINKER_FLAG	= -arch x86_64
+CMD_AS		= nasm
+# FLAG_AS		= -f elf64
+ifeq ($(shell uname), Darwin)
+	FLAG_AS			+= -f macho64
+# LINKER_FLAG		+= -macosx_version_min 10.13 -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem
+	LINKER_FLAG		+= -macosx_version_min 13.0 -L/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/lib -lSystem
+endif
+
+# FLAG_AS = -f elf64
 ifeq ($(DEBUG), 1)
 	CXXFLAGS += -g3
 endif
 
-SRC = main.c
-OBJS = $(addprefix $(OBJ_DIR)/, $(SRC:%.c=%.o))
+SRC_C = main.c
+OBJS_C = $(addprefix $(OBJ_DIR_C)/, $(SRC_C:%.c=%.o))
+vpath %.c $(foreach dir, $(SRC_DIR_C), $(dir):)
 
-vpath %.c $(foreach dir, $(SRC_DIR), $(dir):)
+SRC_ASM = main.s
+OBJS_ASM = $(addprefix $(OBJ_DIR_ASM)/, $(SRC_ASM:%.s=%.o))
+vpath %.s $(foreach dir, $(SRC_DIR_ASM), $(dir):)
 
+# all : $(NAME_C) ${NAME_ASM}
+all : ${NAME_ASM}
+# all : $(NAME_C)
 
-all : $(NAME)
+$(NAME_ASM) : $(OBJS_ASM)
+	${LINKER} ${OBJS_ASM} -o $(NAME_ASM) ${LINKER_FLAG}
 
-$(NAME) : $(OBJS)
-	$(CXX) ${CXXFLAGS} -I${INC_DIR} ${OBJS} -o $@
+$(NAME_C) : $(OBJS_C)
+	$(CXX) ${CXXFLAGS} -I${INC_DIR} ${OBJS_C} -o $@
 
-# $(OBJ_DIR)/%.o: %.s | $(OBJ_DIR)
-# 	$(CMD_AS) ${FLAG_AS} -o $@ $<
+$(OBJ_DIR_ASM)/%.o: %.s | $(OBJ_DIR_ASM)
+	$(CMD_AS) ${FLAG_AS} -o $@ $<
 
 # --  Redirection in OBJS  -- #
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+$(OBJ_DIR_C)/%.o: %.c | $(OBJ_DIR_C)
 	$(CXX) ${CXXFLAGS} -I${INC_DIR} -o $@ -c $<
 
-$(OBJ_DIR) :
+$(OBJ_DIR_C) :
 	@mkdir -p $@
 
-# ${NAME_T} : $(NAME) ${OBJS_TEST}
-# 	$(CXX) ${CXXFLAGS} ${OBJS_TEST} -I${INC_DIR} -o $(NAME_T) -L. -lasm -fPIC -pie
+$(OBJ_DIR_ASM) :
+	@mkdir -p $@
 
 clean:
-	rm -rf $(OBJ_DIR)
+	rm -rf ${OBJ_DIR_C} ${OBJ_DIR_ASM}
 
 fclean: clean
-	rm -f $(NAME) ${NAME_T}
+	rm -f $(NAME_C) ${NAME_ASM}
 
 
 re: fclean all
