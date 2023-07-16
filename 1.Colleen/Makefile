@@ -35,9 +35,7 @@ SRC_ASM = main.s
 OBJS_ASM = $(addprefix $(OBJ_DIR_ASM)/, $(SRC_ASM:%.s=%.o))
 vpath %.s $(foreach dir, $(SRC_DIR_ASM), $(dir):)
 
-# all : $(NAME_C) ${NAME_ASM}
-all : ${NAME_ASM}
-# all : $(NAME_C)
+all : $(NAME_C) ${NAME_ASM}
 
 $(NAME_ASM) : $(OBJS_ASM)
 	${LINKER} ${OBJS_ASM} -o $(NAME_ASM) ${LINKER_FLAG}
