@@ -60,7 +60,7 @@ clean:
 	rm -rf ${OBJ_DIR_C} ${OBJ_DIR_ASM}
 
 fclean: clean
-	rm -f $(NAME_C) ${NAME_ASM}
+	rm -f $(NAME_C) ${NAME_ASM} Grace_kid.*
 
 
 re: fclean all
