@@ -31,7 +31,7 @@ SRC_C = Grace.c
 OBJS_C = $(addprefix $(OBJ_DIR_C)/, $(SRC_C:%.c=%.o))
 vpath %.c $(foreach dir, $(SRC_DIR_C), $(dir):)
 
-SRC_ASM = main.s
+SRC_ASM = Grace.s
 OBJS_ASM = $(addprefix $(OBJ_DIR_ASM)/, $(SRC_ASM:%.s=%.o))
 vpath %.s $(foreach dir, $(SRC_DIR_ASM), $(dir):)
 
