@@ -39,7 +39,7 @@ vpath %.s $(foreach dir, $(SRC_DIR_ASM), $(dir):)
 all : $(NAME_C) ${NAME_ASM}
 
 $(NAME_ASM) : $(OBJS_ASM)
-	${LINKER} ${OBJS_ASM} -o $(NAME_ASM)  ${LINKER_FLAG}
+	$(CXX) -fPIE ${OBJS_ASM} -o $@
 
 $(NAME_C) : $(OBJS_C)
 	$(CXX) ${CXXFLAGS} -I${INC_DIR} ${OBJS_C} -o $@
