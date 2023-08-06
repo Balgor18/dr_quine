@@ -14,10 +14,13 @@ CXXFLAGS	= -Wall -Wextra -Werror
 LINKER		= ld
 LINKER_FLAG	= -arch x86_64
 CMD_AS		= nasm
-# FLAG_AS		= -f elf64
+
 ifeq ($(shell uname), Darwin)
-	FLAG_AS			+= -f macho64
-	LINKER_FLAG		+= -macosx_version_min 13.0 -L/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/lib -lSystem
+	FLAG_AS			= -f macho64
+	LINKER_FLAG		= -arch x86_64 -macosx_version_min 13.0 -L/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/lib -lSystem
+else ifeq ($(shell uname), Linux)
+	FLAG_AS		= -f elf64
+	LINKER_FLAG	= -no-pie -lc
 endif
 
 ifeq ($(DEBUG), 1)
@@ -35,7 +38,7 @@ vpath %.s $(foreach dir, $(SRC_DIR_ASM), $(dir):)
 all : $(NAME_C) ${NAME_ASM}
 
 $(NAME_ASM) : $(OBJS_ASM)
-	${LINKER} ${OBJS_ASM} -o $(NAME_ASM) ${LINKER_FLAG}
+	$(CXX) ${OBJS_ASM} -o $@ ${LINKER_FLAG}
 
 $(NAME_C) : $(OBJS_C)
 	$(CXX) ${CXXFLAGS} -I${INC_DIR} ${OBJS_C} -o $@
