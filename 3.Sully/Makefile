@@ -20,7 +20,7 @@ ifeq ($(shell uname), Darwin)
 	LINKER_FLAG		= -arch x86_64 -macosx_version_min 13.0 -L/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/lib -lSystem
 else ifeq ($(shell uname), Linux)
 	FLAG_AS		= -f elf64
-	LINKER_FLAG	= -fPIE -lc
+	LINKER_FLAG	= -no-pie -lc
 endif
 
 ifeq ($(DEBUG), 1)
